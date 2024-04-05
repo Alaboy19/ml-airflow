@@ -50,7 +50,7 @@ def prepare_churn_dataset():
             Column('dependents',String),
             Column('multiple_lines',String),
             Column('target',Integer),
-            UniqueConstraint('customer_id', name='unique_employee_constraint')
+            UniqueConstraint('customer_id', name='unique_employee_constraint_')
             ) 
 
         if not inspect(db_conn).has_table(users_churn.name): 
