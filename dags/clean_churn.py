@@ -52,15 +52,11 @@ def clean_churn_dataset():
         sql =f"""
         select
             c.customer_id, c.begin_date, c.end_date, c.type, c.paperless_billing, c.payment_method, c.monthly_charges, c.total_charges,
-            i.internet_service, i.online_security, i.online_backup, i.device_protection, i.tech_support, i.streaming_tv, i.streaming_movies,
-            p.gender, p.senior_citizen, p.partner, p.dependents,
-            ph.multiple_lines
-        from contracts as c
-        left join internet as i on i.customer_id = c.customer_id
-        left join personal as p on p.customer_id = c.customer_id
-        left join phone as ph on ph.customer_id = c.customer_id
+            c.internet_service, c.online_security, c.online_backup, c.device_protection, c.tech_support, c.streaming_tv, c.streaming_movies,
+            c.gender, c.senior_citizen, c.partner, c.dependents, c.multiple_lines, c.target 
+        from users_churn as c
         """
-        data = pd.read_sql(sql, conn).drop(columns=['id'])
+        data = pd.read_sql(sql, conn)#.drop(columns=['id'])
         conn.close()
         return data
 
@@ -82,7 +78,7 @@ def clean_churn_dataset():
                 potential_outliers[col] = ~data[col].between(lower, upper)
 
             outliers = potential_outliers.any(axis=1)
-            #print(outliers)
+            print(outliers)
             return data[~outliers]
 
 
@@ -108,6 +104,7 @@ def clean_churn_dataset():
         data = remove_duplicates(data)
         data = outliers(data)
         data = fill_missing_values(data)
+        print(data.info)
         return data
 
     @task()
